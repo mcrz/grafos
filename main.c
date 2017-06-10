@@ -14,8 +14,8 @@ int main()
     for(i=1; i<=n;i++){
         insere_no(g,i);
     }
-    insere_aresta(g,1,2);
-    insere_aresta(g,2,1);
+    insere_aresta(g,1,2);    //preenche o grafo de maneira "burra"
+    insere_aresta(g,2,1);    // o ideal eh dar opcao pro usuario fazer as ligacoes que ele quer
     insere_aresta(g,1,3);
     insere_aresta(g,3,1);
     insere_aresta(g,4,8);
@@ -33,7 +33,7 @@ int main()
     printf("\n%d cores",g->cores);
 }
 
-int direcionado(TG*g){
+int direcionado(TG*g){ //verifica se eh direcionado (1) ou nao direcionado(0)
     TNo * p = g->prim;
 
     while(p){
