@@ -5,44 +5,85 @@
 int orientado(TG*g);
 void pintarBack(TG * g,TNo* no, int cor, int controle);
 int pintar(TG * g);
-
-int main()
+TG* criaGrafo(char* nomeArq);
+int main(int argc, char* argv[])
 {
-    TG *g = cria();
-    int n,i,tam;
-    printf("Insira o tamanho do grafo:\n");
-    scanf("%d",&tam);
-    for(i=1; i<=tam;i++){
-        insere_no(g,i);
-    }
-    pintar(g);
-
+    if(argc<2) return 0;
+    TG *g = criaGrafo(argv[1]);
+    int i, n, r;
+    int dir = orientado(g);
     while(1){
-        printf(" 1 - Iserir aresta \n 2 - Inserir No \n 3 - Imprimir \n 4 - Confereir Caminho \n 0 - Sair\n");
+        printf("\n 1 - Inserir \n 2 - Retirar \n 3 - Buscar \n 4 - Imprimir \n 5 - Especial \n 6 - Sair\n");
         scanf("%d",&i);
-        if(i == 0) break;
-        else if(i == 1){
-            printf("Inisira o no e o novo vizinho: \n");
-            scanf("%d%d", &n, &i);
-            insere_aresta(g,n, i);
+
+        if(i == 6){
+          libera(g);
+          break;
         }
-        else if(i == 2) insere_no(g, ++tam);
-        else if(i == 3){
-            imprime(g);
-            if(orientado(g)) printf("orientado");
-            else printf("nao orientado");
-            printf("\n%d cores\n",g->cores);
+
+        switch(i){
+
+            case(1):
+                printf("\n 1 - No \n 2 - Aresta \n");
+                scanf("%d",&n);
+                if(n == 1){
+                    printf("\n Digite o valor do no:");
+                    scanf("%d",&n);
+                    insere_no(g, n);
+                }else if(n == 2){
+                    printf("\n Digite valor de no1 e no2:");
+                    scanf("%d%d",&n,&r);
+                    insere_aresta(g,n,r);
+                    if(dir == 0){
+                        insere_aresta(g,r,n);
+                    }
+                }
+                break;
+            case(2):
+                printf("\n 1 - No \n 2 - Aresta \n");
+                scanf("%d",&n);
+                if(n == 1){
+                    printf("\n Digite o valor do no:");
+                    scanf("%d",&n);
+                    retira_no(g, n);
+                }else if(n == 2){
+                    printf("\n Digite valor de no1 e no2:");
+                    scanf("%d%d",&n,&r);
+                    retira_aresta(g,n,r);
+                    if(dir == 0){
+                        retira_aresta(g,r,n);
+                    }
+                }
+                break;
+            case(3):
+                printf("\n 1 - No \n 2 - Aresta \n");
+                scanf("%d",&n);
+                if(n == 1){
+                    printf("\n Digite o valor do no:");
+                    scanf("%d",&n);
+                    TNo *resp = busca_no(g, n);
+                    if(!resp) printf("Nó não encontrado");
+                    else printf("%d", resp->id_no);
+                }else if(n == 2){
+                    printf("\n Digite valor de no1 e no2:");
+                    scanf("%d%d",&n,&r);
+                    TViz *resp = busca_aresta(g,n,r);
+                    if(!resp) printf("\n %d e %d nao estao conectados\n", &n, &r);
+                    else printf("\n %d e %d estao conectados\n", &n, &r);
+
+                }
+                break;
+
+            case(4):
+                imprime(g);
+                break;
+            case(5):
+                //se orientado imprimir componentes fortemente conexas
+                //se nao orientado imprimir: se eh conectado (pontes e pontos de art); se nao conectado (componentes conectadas)
+                break;
 
         }
-        else if(i == 4){
-            printf("Inseira um no de destino e outro de chegada: \n");
-            scanf("%d%d", &n, &i);
-            TNo * no1 = busca_no(g,n);
-            TNo * no2 = busca_no(g, i);
-            if(caminho(g, no1, no2)) printf("ha caminho\n");
-            else printf("nao ha caminho\n");
-        }
-        //pintar(g);
+
     }
 }
 
@@ -54,12 +95,12 @@ int orientado(TG*g){ //verifica se eh orientado (1) ou nao orientado(0)
         while(v){
             TViz * ida = busca_aresta(g,p->id_no,v->id_viz);
             TViz * volta = busca_aresta(g,v->id_viz,p->id_no);
-            if(ida == NULL || volta == NULL) return 0;
+            if(ida == NULL || volta == NULL) return 1;
             v = v->prox_viz;
         }
         p = p->prox_no;
     }
-    return 1;
+    return 0;
 }
 
 int pintar(TG * g){
@@ -130,4 +171,30 @@ int caminho(TG *g, TNo * no1, TNo * no2){
         v = v->prox_viz;
     }
     return 0;
+}
+
+TG* criaGrafo(char* nomeArq){
+    FILE* arquivo = fopen(nomeArq,"rt");
+    if(!arquivo) exit(1);
+    int n,i, r;
+
+    fscanf(arquivo,"%d",&n);
+
+    TG* g = cria();
+
+    for(i = 0; i< n; i++){
+        insere_no(g,i+1);
+    }
+
+
+    r = fscanf(arquivo,"%d%d",&n,&i);
+    while(r!=EOF){
+        insere_aresta(g,n,i);
+        r = fscanf(arquivo,"%d%d",&n,&i);
+    }
+
+    fclose(arquivo);
+
+    return g;
+
 }
