@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <grafo.h>
 
-int direcionado(TG*g);
+int orientado(TG*g);
 void pintarBack(TG * g,TNo* no, int cor, int controle);
 int pintar(TG * g);
 
@@ -29,8 +29,8 @@ int main()
         else if(i == 2) insere_no(g, ++tam);
         else if(i == 3){
             imprime(g);
-            if(direcionado(g)) printf("direcionado");
-            else printf("nao direcionado");
+            if(orientado(g)) printf("orientado");
+            else printf("nao orientado");
             printf("\n%d cores\n",g->cores);
 
         }
@@ -42,11 +42,11 @@ int main()
             if(caminho(g, no1, no2)) printf("ha caminho\n");
             else printf("nao ha caminho\n");
         }
-        pintar(g);
+        //pintar(g);
     }
 }
 
-int direcionado(TG*g){ //verifica se eh direcionado (1) ou nao direcionado(0)
+int orientado(TG*g){ //verifica se eh orientado (1) ou nao orientado(0)
     TNo * p = g->prim;
 
     while(p){
