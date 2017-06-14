@@ -6,6 +6,8 @@ int orientado(TG*g);
 void pintarBack(TG * g,TNo* no, int cor, int controle);
 int pintar(TG * g);
 TG* criaGrafo(char* nomeArq);
+void descolorir(TG *g);
+
 int main(int argc, char* argv[])
 {
     if(argc<2) return 0;
